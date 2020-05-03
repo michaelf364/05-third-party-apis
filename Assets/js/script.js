@@ -1,5 +1,5 @@
 // variable for holding all time block text
-var timeBlocksText = ["", "", "", "", "", "", "", "", ""];
+var timeBlocksText = ["", "", "", "", "", "", "", ""];
 //accesses timeBlocks for event delegation
 var timeBlocks = document.querySelector(".container");
 // current hour for text area coloring
@@ -11,79 +11,84 @@ initialize();
 function initialize() {
     // sets current date in currentDay
     $("#currentDay").text(moment().format("dddd, MMMM Do, YYYY"));
-
     loadStorage();
     renderTimeBlocks();
 }
 // loads from local storage
 function loadStorage() {
-    var temp = JSON.parse(localStorage.getItem("timeBlocksText"));
+    var storage = JSON.parse(localStorage.getItem("timeBlocksText"));
 
-    if (temp !== null) {
-        timeBlocksText = tempLoad;
+    if (storage !== null) {
+        timeBlocksText = storage;
     }
 }
 
 function renderTimeBlocks() {
     $(".container").empty();
 
-    for (var i = 0; i < 9; i++) {
-         // sets a variable for time of current block being rendered
-         var time = i + 9;
-         if (time > 12) {
-             time -= 12;
-         }
- 
-         //creates time block and adds classes
-         var timeBlock = $("<section>");
-         timeBlock.addClass("time-block row");
- 
-         // creates hour div and adds classes/text content
-         var hour = $("<div>");
-         hour.addClass("hour col-2 col-md-1");
-         if (time > 8) {
-             hour.text(time + " AM");
-         }
-         else {
-             hour.text(time + " PM")
-         }
-
-        // creates text area addes classes, index and value
-        var textArea = $("<textarea>").addClass("col-8 col-md-10");
-        if ((i + 9) < currentHour) {
-            textArea.addClass("past");
+    for (var i = 9; i < 17; i++) {
+        time = i;
+        if (time > 12) {
+            time -= 12;
         }
-        else if ((i + 9) == currentHour) {
-            textArea.addClass("present");
+        //creates time block and adds classes
+        var timeBlock = $("<section>");
+        timeBlock.addClass("time-block row");
+
+        // creates hour div and adds classes/text content
+        var hourDiv = $("<div>");
+        hourDiv.addClass("hour col-2 col-md-1");
+        if (time == 12) {
+            hourDiv.text(time + " PM");
+        }
+        else if (time > 8) {
+            hourDiv.text(time + " AM");
         }
         else {
-            textArea.addClass("future");
+            hourDiv.text(time + " PM");
+        }
+
+        // creates text area addes classes, index and value
+        var textArea = $("<textarea>");
+        if (i < currentHour) {
+            textArea.addClass("past col-8 col-md-10");
+        }
+        else if (i == currentHour) {
+            textArea.addClass("present col-8 col-md-10");
+        }
+        else {
+            textArea.addClass("future col-8 col-md-10");
         }
         textArea.attr("index", i);
         textArea.val(timeBlocksText[i]);
 
         // creates save button
-        var saveBtn = $("<button>").attr("type", "button");
-        saveBtn.attr("index", i);
+        var saveBtn = $("<button>");
+        saveBtn.attr({ index: i, type: "button" });
         saveBtn.addClass("saveBtn col-2 col-md-1");
-        saveBtn.append($("<i>").addClass("fa fa-save"));
-        
+        saveBtn.html("<span><i class='fa fa-save'></i></span>");
+
         // appends elements to timeBlock
-        timeBlock.append(hour, textArea, saveBtn);
+        timeBlock.append(hourDiv, textArea, saveBtn);
 
         // appends new time block to the page
         $(".container").append(timeBlock);
     }
 }
-
-// adds event listener to save timeBlock
-timeBlocks.addEventListener("click", function (event) {
+$(".saveBtn").on("click", function (event) {
+    if (event.target.type === "button") {
         var index = event.target.getAttribute("index");
         var content = event.target.parentElement.children[1].value;
         timeBlocksText.splice(index, 1, content);
         saveSchedule();
+    }
+    else if (event.target.parentElement.type === "button") {
+        var index = event.target.parentElement.getAttribute("index");
+        var content = event.target.parentElement.parentElement.children[1].value;
+        timeBlocksText.splice(index, 1, content);
+        saveSchedule();
+    }
 });
-
 // saves currently loaded schedule to localStorage
 function saveSchedule() {
     localStorage.setItem("timeBlocksText", JSON.stringify(timeBlocksText));
