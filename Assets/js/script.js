@@ -36,31 +36,31 @@ function renderTimeBlocks() {
         timeBlock.addClass("time-block row");
 
         // creates hour div and adds classes/text content
-        var hourDiv = $("<div>");
-        hourDiv.addClass("hour col-2 col-md-1");
+        var hour = $("<div>");
+        hour.addClass("hour col-2 col-md-1");
         if (time == 12) {
-            hourDiv.text(time + " PM");
+            hour.text(time + " PM");
         }
         else if (time > 8) {
-            hourDiv.text(time + " AM");
+            hour.text(time + " AM");
         }
         else {
-            hourDiv.text(time + " PM");
+            hour.text(time + " PM");
         }
 
         // creates text area addes classes, index and value
-        var textArea = $("<textarea>");
+        var text = $("<textarea>");
         if (i < currentHour) {
-            textArea.addClass("past col-8 col-md-10");
+            text.addClass("past col-8 col-md-10");
         }
         else if (i == currentHour) {
-            textArea.addClass("present col-8 col-md-10");
+            text.addClass("present col-8 col-md-10");
         }
         else {
-            textArea.addClass("future col-8 col-md-10");
+            text.addClass("future col-8 col-md-10");
         }
-        textArea.attr("index", i);
-        textArea.val(timeBlocksText[i]);
+        text.attr("index", i);
+        text.val(timeBlocksText[i]);
 
         // creates save button
         var saveBtn = $("<button>");
@@ -69,7 +69,7 @@ function renderTimeBlocks() {
         saveBtn.html("<span><i class='fa fa-save'></i></span>");
 
         // appends elements to timeBlock
-        timeBlock.append(hourDiv, textArea, saveBtn);
+        timeBlock.append(hour, text, saveBtn);
 
         // appends new time block to the page
         $(".container").append(timeBlock);
